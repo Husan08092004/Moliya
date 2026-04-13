@@ -836,6 +836,8 @@ async function init() {
   const saved = localStorage.getItem('tgToken');
   if (saved) document.getElementById('tgToken').value = saved;
   renderWatchBotList();
+  // Bot serverda doim ishlaydi — avtomatik ko'rsatish
+  tgStart();
   const savedGroup = localStorage.getItem('tgGroupChatId');
   if (savedGroup) {
     document.getElementById('groupChatId').value = savedGroup;
