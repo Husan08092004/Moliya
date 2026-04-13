@@ -103,13 +103,38 @@ async function tgSend(chatId, text, keyboard) {
   } catch(e) { console.error('Send error:', e.message); }
 }
 
+async function deleteWebhook() {
+  try {
+    const res = await fetch(`${BASE}/deleteWebhook?drop_pending_updates=false`);
+    const data = await res.json();
+    console.log('🔗 Webhook o\'chirildi:', data.ok);
+  } catch(e) { console.error('deleteWebhook error:', e.message); }
+}
+
+let pollBackoff = 1000;
+
 async function getUpdates() {
   try {
-    const res = await fetch(`${BASE}/getUpdates?offset=${offset}&timeout=25`);
+    const res = await fetch(`${BASE}/getUpdates?offset=${offset}&timeout=25`, { timeout: 35000 });
     const data = await res.json();
-    if (!data.ok) { console.log('getUpdates error:', data); return []; }
+    if (!data.ok) {
+      if (data.error_code === 409) {
+        console.log(`⚠️ 409 Conflict — ${pollBackoff/1000}s kutamiz...`);
+        await new Promise(r => setTimeout(r, pollBackoff));
+        pollBackoff = Math.min(pollBackoff * 2, 60000);
+        return [];
+      }
+      console.log('getUpdates error:', data);
+      await new Promise(r => setTimeout(r, 3000));
+      return [];
+    }
+    pollBackoff = 1000;
     return data.result || [];
-  } catch(e) { console.error('Poll error:', e.message); return []; }
+  } catch(e) {
+    console.error('Poll error:', e.message);
+    await new Promise(r => setTimeout(r, 3000));
+    return [];
+  }
 }
 
 // ===================== BANK DETECTION =====================
@@ -407,4 +432,4 @@ if (!TOKEN) { console.error('❌ BOT_TOKEN topilmadi!'); process.exit(1); }
 console.log('🤖 Moliya Bot ishga tushdi...');
 console.log(`📡 MY_CHAT_ID: ${MY_CHAT_ID}`);
 console.log(`👥 GROUP_ID: ${GROUP_ID || 'sozlanmagan'}`);
-poll();
+deleteWebhook().then(() => poll());
