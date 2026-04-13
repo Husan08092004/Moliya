@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moliya Boshqaruvi</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0f1117;
+      --card: #1a1d27;
+      --card2: #222536;
+      --border: #2e3248;
+      --green: #22c55e;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --yellow: #f59e0b;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header h1 { font-size: 18px; font-weight: 700; color: var(--blue); }
+    header span { font-size: 13px; color: var(--muted); }
+
+    /* NAV */
+    nav {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      padding: 8px 20px;
+      gap: 4px;
+      align-items: center;
+      justify-content: center;
+    }
+    nav button {
+      background: none;
+      border: none;
+      color: var(--muted);
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      line-height: 1;
+    }
+    nav button .nav-icon {
+      font-size: 18px;
+      line-height: 1;
+    }
+    nav button .nav-label {
+      font-size: 11px;
+    }
+    nav button:hover {
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+    }
+    nav button.active {
+      background: rgba(59,130,246,0.15);
+      color: var(--blue);
+      box-shadow: inset 0 0 0 1px rgba(59,130,246,0.3);
+    }
+    @media (max-width: 600px) {
+      nav { padding: 6px 8px; gap: 2px; }
+      nav button { padding: 6px 10px; }
+    }
+
+    /* MAIN */
+    main { max-width: 900px; margin: 0 auto; padding: 24px; }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* CARDS ROW */
+    .cards-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .stat-card .label { font-size: 12px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-card .value { font-size: 26px; font-weight: 700; }
+    .stat-card.green .value { color: var(--green); }
+    .stat-card.red .value { color: var(--red); }
+    .stat-card.blue .value { color: var(--blue); }
+
+    /* FORM */
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .form-card h2 { font-size: 15px; margin-bottom: 16px; color: var(--text); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 12px; color: var(--muted); }
+    .form-group input, .form-group select, .form-group textarea {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--blue);
+    }
+    .form-group textarea { resize: vertical; min-height: 60px; }
+    .form-group select option { background: var(--card2); }
+
+    /* TYPE TOGGLE */
+    .type-toggle { display: flex; gap: 8px; margin-bottom: 16px; }
+    .type-btn {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: none;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .type-btn.income.active { border-color: var(--green); color: var(--green); background: rgba(34,197,94,0.08); }
+    .type-btn.expense.active { border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.08); }
+
+    /* BUTTONS */
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-green { background: var(--green); color: #fff; }
+    .btn-red { background: var(--red); color: #fff; }
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
+      border-radius: 6px;
+    }
+
+    /* TABLE */
+    .table-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .table-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .table-header h2 { font-size: 15px; }
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .filter-row input, .filter-row select {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 6px 10px;
+      font-size: 13px;
+      outline: none;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: var(--card2); }
+    th { padding: 12px 16px; text-align: left; font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { padding: 12px 16px; font-size: 14px; border-top: 1px solid var(--border); }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge.income { background: rgba(34,197,94,0.15); color: var(--green); }
+    .badge.expense { background: rgba(239,68,68,0.15); color: var(--red); }
+    .amount-pos { color: var(--green); font-weight: 600; }
+    .amount-neg { color: var(--red); font-weight: 600; }
+    .empty { text-align: center; padding: 40px; color: var(--muted); }
+
+    /* CHART */
+    .chart-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .chart-section h2 { font-size: 15px; margin-bottom: 16px; }
+    .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 160px; }
+    .bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+    .bar-wrap { width: 100%; display: flex; gap: 3px; align-items: flex-end; height: 140px; }
+    .bar {
+      flex: 1;
+      border-radius: 4px 4px 0 0;
+      min-height: 2px;
+      transition: height 0.4s;
+    }
+    .bar.in { background: var(--green); }
+    .bar.out { background: var(--red); }
+    .bar-label { font-size: 10px; color: var(--muted); text-align: center; }
+
+    /* DONUT CHART */
+    .report-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 650px) {
+      .report-two-col { grid-template-columns: 1fr; }
+    }
+    .donut-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .donut-svg-wrap { position: relative; width: 180px; height: 180px; }
+    .donut-svg-wrap svg { width: 180px; height: 180px; }
+    .donut-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .donut-center-val { font-size: 15px; font-weight: 700; }
+    .donut-center-lbl { font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .donut-legend { width: 100%; }
+    .donut-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 7px;
+      transition: background 0.15s;
+      cursor: default;
+    }
+    .donut-legend-item:hover { background: rgba(255,255,255,0.05); }
+    .donut-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .donut-leg-name { font-size: 13px; flex: 1; }
+    .donut-leg-count { font-size: 11px; color: var(--muted); background: rgba(255,255,255,0.07); border-radius: 20px; padding: 1px 7px; }
+    .donut-leg-val { font-size: 13px; font-weight: 600; text-align: right; }
+    .donut-leg-pct { font-size: 11px; color: var(--muted); min-width: 32px; text-align: right; }
+    /* BOT CHAT */
+    .chat-page {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 140px);
+    }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 8px 0 16px;
+    }
+    .chat-msg {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      max-width: 80%;
+    }
+    .chat-msg.bot { align-self: flex-start; }
+    .chat-msg.user { align-self: flex-end; flex-direction: row-reverse; }
+    .chat-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+      background: var(--card2);
+      border: 1px solid var(--border);
+    }
+    .chat-bubble {
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .chat-msg.bot .chat-bubble {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+    .chat-msg.user .chat-bubble {
+      background: var(--blue);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-quick-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .chat-quick-btn {
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--card2);
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chat-quick-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .chat-quick-btn.inc { border-color: var(--green); color: var(--green); background: rgba(34,197,94,0.08); }
+    .chat-quick-btn.exp { border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.08); }
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .chat-input {
+      flex: 1;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      color: var(--text);
+      padding: 10px 18px;
+      font-size: 14px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .chat-input:focus { border-color: var(--blue); }
+    .chat-send-btn {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--blue);
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: opacity 0.2s;
+    }
+    .chat-send-btn:hover { opacity: 0.85; }
+    .tx-confirm-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .tx-confirm-card .row { display: flex; justify-content: space-between; padding: 3px 0; }
+    .tx-confirm-card .lbl { color: var(--muted); }
+
+    .donut-tooltip {
+      position: fixed;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      pointer-events: none;
+      z-index: 999;
+      display: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      white-space: nowrap;
+    }
+    .donut-tooltip .tt-name { color: var(--muted); font-size: 11px; margin-bottom: 2px; }
+    .donut-tooltip .tt-val { font-weight: 700; font-size: 15px; }
+    .donut-tooltip .tt-count { color: var(--muted); font-size: 11px; margin-top: 2px; }
+
+    /* SETTINGS */
+    .settings-section { margin-bottom: 24px; }
+    .settings-section h2 { font-size: 15px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 420px;
+      max-width: 95vw;
+    }
+    .modal h3 { margin-bottom: 16px; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .cards-row { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .form-row.three { grid-template-columns: 1fr 1fr; }
+      main { padding: 16px; }
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-size: 14px;
+      z-index: 999;
+      animation: slideIn 0.3s ease;
+      pointer-events: none;
+    }
+    .toast.success { border-left: 3px solid var(--green); }
+    .toast.error { border-left: 3px solid var(--red); }
+    @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    .summary-period {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .period-btn {
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: none;
+      color: var(--muted);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .period-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+  </style>
+</head>
+<body>
+<div class="donut-tooltip" id="donutTooltip">
+  <div class="tt-name" id="ttName"></div>
+  <div class="tt-val" id="ttVal"></div>
+  <div class="tt-count" id="ttCount"></div>
+</div>
+
+<header>
+  <h1>💼 Moliya Boshqaruvi</h1>
+  <span id="currentDate"></span>
+</header>
+
+<nav>
+  <button class="active" onclick="showPage('dashboard')">
+    <span class="nav-icon">📊</span>
+    <span class="nav-label">Bosh sahifa</span>
+  </button>
+  <button onclick="showPage('add')">
+    <span class="nav-icon">➕</span>
+    <span class="nav-label">Kiritish</span>
+  </button>
+  <button onclick="showPage('transactions')">
+    <span class="nav-icon">📋</span>
+    <span class="nav-label">Tranzaksiyalar</span>
+  </button>
+  <button onclick="showPage('report')">
+    <span class="nav-icon">📈</span>
+    <span class="nav-label">Hisobot</span>
+  </button>
+  <button onclick="showPage('bot')">
+    <span class="nav-icon">🤖</span>
+    <span class="nav-label">Bot</span>
+  </button>
+  <button onclick="showPage('settings')">
+    <span class="nav-icon">⚙️</span>
+    <span class="nav-label">Sozlamalar</span>
+  </button>
+</nav>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="summary-period">
+      <button class="period-btn active" onclick="setPeriod('today', this)">Bugun</button>
+      <button class="period-btn" onclick="setPeriod('week', this)">Bu hafta</button>
+      <button class="period-btn" onclick="setPeriod('month', this)">Bu oy</button>
+      <button class="period-btn" onclick="setPeriod('all', this)">Hammasi</button>
+    </div>
+
+    <div class="cards-row">
+      <div class="stat-card green">
+        <div class="label">Jami kirim</div>
+        <div class="value" id="totalIncome">0</div>
+      </div>
+      <div class="stat-card red">
+        <div class="label">Jami chiqim</div>
+        <div class="value" id="totalExpense">0</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="label">Sof foyda</div>
+        <div class="value" id="netBalance">0</div>
+      </div>
+    </div>
+
+    <div class="chart-section">
+      <h2>Oxirgi 7 kun</h2>
+      <div class="bar-chart" id="barChart"></div>
+      <div style="display:flex;gap:16px;margin-top:8px;">
+        <span style="font-size:12px;color:var(--green);">■ Kirim</span>
+        <span style="font-size:12px;color:var(--red);">■ Chiqim</span>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <h2>So'nggi tranzaksiyalar</h2>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Sana</th>
+            <th>Tavsif</th>
+            <th>Kategoriya</th>
+            <th>Tur</th>
+            <th>Summa</th>
+          </tr>
+        </thead>
+        <tbody id="recentList"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ADD TRANSACTION -->
+  <div class="page" id="page-add">
+    <div class="form-card">
+      <h2>Yangi tranzaksiya qo'shish</h2>
+
+      <div class="type-toggle">
+        <button class="type-btn income active" id="btnIncome" onclick="setType('income')">↑ Kirim</button>
+        <button class="type-btn expense" id="btnExpense" onclick="setType('expense')">↓ Chiqim</button>
+      </div>
+
+      <div class="form-row three" style="margin-bottom:12px;">
+        <div class="form-group">
+          <label>Summa (so'm)</label>
+          <input type="number" id="amount" placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label>Sana</label>
+          <input type="date" id="txDate">
+        </div>
+        <div class="form-group">
+          <label>Kategoriya</label>
+          <select id="category"></select>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-bottom:16px;">
+        <div class="form-group">
+          <label>Tavsif / Izoh</label>
+          <input type="text" id="description" placeholder="Nima uchun...">
+        </div>
+        <div class="form-group">
+          <label>To'lov usuli</label>
+          <select id="payMethod">
+            <option>Naqd</option>
+            <option>Karta</option>
+            <option>Bank o'tkazmasi</option>
+            <option>Boshqa</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="addTransaction()">✓ Saqlash</button>
+    </div>
+  </div>
+
+  <!-- TRANSACTIONS -->
+  <div class="page" id="page-transactions">
+    <div class="table-card">
+      <div class="table-header">
+        <h2>Barcha tranzaksiyalar</h2>
+        <div class="filter-row">
+          <input type="month" id="filterMonth" onchange="renderTransactions()">
+          <select id="filterType" onchange="renderTransactions()">
+            <option value="">Hammasi</option>
+            <option value="income">Kirim</option>
+            <option value="expense">Chiqim</option>
+          </select>
+          <select id="filterCat" onchange="renderTransactions()">
+            <option value="">Kategoriya</option>
+          </select>
+          <button class="btn btn-sm" style="background:var(--card2);color:var(--muted);border:1px solid var(--border);" onclick="exportCSV()">⬇ CSV</button>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Sana</th>
+            <th>Tavsif</th>
+            <th>Kategoriya</th>
+            <th>To'lov</th>
+            <th>Tur</th>
+            <th>Summa</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="txList"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- REPORT -->
+  <div class="page" id="page-report">
+    <div class="summary-period" style="margin-bottom:16px;">
+      <button class="period-btn active" onclick="setReportPeriod('month', this)">Bu oy</button>
+      <button class="period-btn" onclick="setReportPeriod('last', this)">O'tgan oy</button>
+      <button class="period-btn" onclick="setReportPeriod('year', this)">Bu yil</button>
+    </div>
+
+    <div class="cards-row" style="margin-bottom:16px;">
+      <div class="stat-card green">
+        <div class="label">Kirim</div>
+        <div class="value" id="rptIncome">0</div>
+      </div>
+      <div class="stat-card red">
+        <div class="label">Chiqim</div>
+        <div class="value" id="rptExpense">0</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="label">Sof foyda</div>
+        <div class="value" id="rptNet">0</div>
+      </div>
+    </div>
+
+    <div class="report-two-col">
+      <div class="chart-section">
+        <h2 style="color:var(--green);margin-bottom:12px;">↑ Kirim kategoriyalari</h2>
+        <div id="incCats"></div>
+      </div>
+      <div class="chart-section">
+        <h2 style="color:var(--red);margin-bottom:12px;">↓ Chiqim kategoriyalari</h2>
+        <div id="expCats"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOT -->
+  <div class="page" id="page-bot">
+    <div class="chat-page">
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="chatInput" placeholder="Yozing... masalan: 50000 kirim savdo" onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="chat-send-btn" onclick="sendChat()">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="page" id="page-settings">
+    <div class="form-card settings-section">
+      <h2>Kategoriyalar</h2>
+      <div style="margin-bottom:12px;">
+        <strong style="font-size:13px;color:var(--green);">Kirim kategoriyalari</strong>
+        <div id="incCatList" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <input type="text" id="newIncCat" placeholder="Yangi kategoriya..." style="background:var(--card2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px 12px;font-size:13px;outline:none;flex:1;">
+          <button class="btn btn-green btn-sm" onclick="addCategory('income')">+ Qo'shish</button>
+        </div>
+      </div>
+      <div>
+        <strong style="font-size:13px;color:var(--red);">Chiqim kategoriyalari</strong>
+        <div id="expCatList" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <input type="text" id="newExpCat" placeholder="Yangi kategoriya..." style="background:var(--card2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px 12px;font-size:13px;outline:none;flex:1;">
+          <button class="btn btn-red btn-sm" onclick="addCategory('expense')">+ Qo'shish</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card settings-section">
+      <h2>🤖 Telegram Bot</h2>
+      <div style="margin-bottom:12px;">
+        <div class="form-group" style="margin-bottom:10px;">
+          <label>Bot Token</label>
+          <input type="text" id="tgToken" placeholder="123456:ABC-DEF..." style="background:var(--card2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px 12px;font-size:13px;outline:none;font-family:monospace;">
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="tgSaveToken()">💾 Saqlash</button>
+          <button class="btn btn-green" id="tgStartBtn" onclick="tgStart()">▶ Boshlash</button>
+          <button class="btn btn-red" id="tgStopBtn" onclick="tgStop()" style="display:none">⏹ To'xtatish</button>
+          <span id="tgStatus" style="font-size:13px;color:var(--muted);">O'chiq</span>
+        </div>
+        <div style="margin-top:10px;font-size:12px;color:var(--muted);">
+          Telegram botingizga xabar yuboring: <b>100000 kirim savdo</b> yoki <b>chiqim 50000 oziq-ovqat</b>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+        <strong style="font-size:13px;">📡 Guruh orqali bank botini kuzatish</strong>
+        <p style="font-size:12px;color:var(--muted);margin:6px 0 10px;">
+          1️⃣ Guruh yarating<br>
+          2️⃣ @CardXabarBot + o'z botingizni guruhga qo'shing<br>
+          3️⃣ Guruh chat ID sini kiriting (minus bilan: -100...)
+        </p>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="groupChatId" placeholder="-1001234567890" style="flex:1;background:var(--card2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px 12px;font-size:13px;outline:none;font-family:monospace;">
+          <button class="btn btn-primary btn-sm" onclick="saveGroupChatId()">💾 Saqlash</button>
+        </div>
+        <div id="groupMonitorStatus" style="font-size:12px;margin-top:8px;color:var(--muted);">Guruh sozlanmagan</div>
+      </div>
+    </div>
+
+    <div class="form-card settings-section">
+      <h2>Ma'lumotlar</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn" style="background:var(--card2);border:1px solid var(--border);color:var(--text);" onclick="exportJSON()">⬇ JSON eksport</button>
+        <button class="btn" style="background:var(--card2);border:1px solid var(--border);color:var(--text);" onclick="document.getElementById('importFile').click()">⬆ Import</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(this)">
+        <button class="btn btn-red" onclick="confirmClear()">🗑 Hammasini o'chirish</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h3>O'chirishni tasdiqlang</h3>
+    <p style="color:var(--muted);font-size:14px;">Bu tranzaksiyani o'chirishni xohlaysizmi?</p>
+    <div class="modal-actions">
+      <button class="btn" style="background:var(--card2);border:1px solid var(--border);color:var(--text);" onclick="closeModal()">Bekor qilish</button>
+      <button class="btn btn-red" onclick="confirmDelete()">O'chirish</button>
+    </div>
+  </div>
+</div>
+
+<!-- CLEAR MODAL -->
+<div class="modal-overlay" id="clearModal">
+  <div class="modal">
+    <h3>Barcha ma'lumotlarni o'chirish</h3>
+    <p style="color:var(--muted);font-size:14px;">Bu amalni bekor qilib bo'lmaydi. Davom etasizmi?</p>
+    <div class="modal-actions">
+      <button class="btn" style="background:var(--card2);border:1px solid var(--border);color:var(--text);" onclick="document.getElementById('clearModal').classList.remove('open')">Bekor qilish</button>
+      <button class="btn btn-red" onclick="clearAll()">Ha, o'chirish</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== STATE =====================
+let transactions = JSON.parse(localStorage.getItem('moliya_tx') || '[]');
+let categories = JSON.parse(localStorage.getItem('moliya_cats') || JSON.stringify({
+  income: ['Savdo', 'Xizmat', 'Investitsiya', 'Boshqa kirim'],
+  expense: ['Ijara', 'Maosh', 'Materiallar', 'Kommunal', 'Transport', 'Soliq', 'Reklama', 'Boshqa chiqim']
+}));
+
+let currentType = 'income';
+let currentPeriod = 'today';
+let currentReportPeriod = 'month';
+let deleteId = null;
+
+// ===================== INIT =====================
+async function init() {
+  document.getElementById('currentDate').textContent = formatDate(new Date());
+  document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
+  const m = new Date(); document.getElementById('filterMonth').value = `${m.getFullYear()}-${String(m.getMonth()+1).padStart(2,'0')}`;
+
+  // Server dan yuklash (Railway da ishlaydi)
+  const fromServer = await loadFromServer();
+  if (fromServer) {
+    // localStorage ni ham yangilaymiz
+    localStorage.setItem('moliya_tx', JSON.stringify(transactions));
+    localStorage.setItem('moliya_cats', JSON.stringify(categories));
+  }
+
+  updateCategorySelect();
+  renderCategorySettings();
+  renderDashboard();
+  renderTransactions();
+  const saved = localStorage.getItem('tgToken');
+  if (saved) document.getElementById('tgToken').value = saved;
+  renderWatchBotList();
+  const savedGroup = localStorage.getItem('tgGroupChatId');
+  if (savedGroup) {
+    document.getElementById('groupChatId').value = savedGroup;
+    const el = document.getElementById('groupMonitorStatus');
+    if (el) { el.innerHTML = `🟢 Faol — Guruh: <b>${savedGroup}</b>`; el.style.color = 'var(--green)'; }
+  }
+}
+
+// ===================== FORMAT =====================
+function fmtMoney(n) {
+  return Number(n).toLocaleString('uz-UZ') + " so'm";
+}
+const MONTHS = ['Yan','Feb','Mar','Apr','May','Iyn','Iyl','Avg','Sen','Okt','Noy','Dek'];
+const MONTHS_FULL = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+function formatDate(d) {
+  const dt = new Date(d);
+  return `${dt.getDate()} ${MONTHS_FULL[dt.getMonth()]} ${dt.getFullYear()}`;
+}
+function formatDateShort(d) {
+  const dt = new Date(d);
+  return `${dt.getDate()} ${MONTHS[dt.getMonth()]} ${dt.getFullYear()}`;
+}
+function formatTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+
+// ===================== PAGES =====================
+const navBtns = document.querySelectorAll('nav button');
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  navBtns.forEach((b, i) => {
+    const pages = ['dashboard','add','transactions','report','bot','settings'];
+    b.classList.toggle('active', pages[i] === name);
+  });
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'transactions') { renderTransactions(); renderFilterCats(); }
+  if (name === 'report') renderReport();
+  if (name === 'bot') initBot();
+}
+
+// ===================== TYPE =====================
+function setType(t) {
+  currentType = t;
+  document.getElementById('btnIncome').classList.toggle('active', t === 'income');
+  document.getElementById('btnExpense').classList.toggle('active', t === 'expense');
+  updateCategorySelect();
+}
+
+// ===================== CATEGORY SELECT =====================
+function updateCategorySelect() {
+  const sel = document.getElementById('category');
+  sel.innerHTML = '';
+  categories[currentType].forEach(c => {
+    const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o);
+  });
+}
+
+// ===================== ADD =====================
+function addTransaction() {
+  const amount = parseFloat(document.getElementById('amount').value);
+  const date = document.getElementById('txDate').value;
+  const category = document.getElementById('category').value;
+  const description = document.getElementById('description').value.trim();
+  const payMethod = document.getElementById('payMethod').value;
+
+  if (!amount || amount <= 0) { toast('Summa kiriting!', 'error'); return; }
+  if (!date) { toast('Sana kiriting!', 'error'); return; }
+
+  const tx = {
+    id: Date.now(),
+    type: currentType,
+    amount,
+    date,
+    category,
+    description,
+    payMethod,
+    createdAt: new Date().toISOString()
+  };
+
+  transactions.unshift(tx);
+  save();
+  document.getElementById('amount').value = '';
+  document.getElementById('description').value = '';
+  toast(currentType === 'income' ? '✓ Kirim qo\'shildi' : '✓ Chiqim qo\'shildi', 'success');
+}
+
+// ===================== PERIOD FILTER =====================
+function setPeriod(p, btn) {
+  currentPeriod = p;
+  document.querySelectorAll('.summary-period .period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDashboard();
+}
+
+function filterByPeriod(txs, period) {
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+  return txs.filter(tx => {
+    if (period === 'today') return tx.date === today;
+    if (period === 'week') {
+      const d = new Date(tx.date), s = new Date(now); s.setDate(s.getDate() - 7);
+      return d >= s;
+    }
+    if (period === 'month') return tx.date.startsWith(`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`);
+    return true;
+  });
+}
+
+// ===================== DASHBOARD =====================
+function renderDashboard() {
+  const filtered = filterByPeriod(transactions, currentPeriod);
+  const income = filtered.filter(t => t.type === 'income').reduce((s,t) => s+t.amount, 0);
+  const expense = filtered.filter(t => t.type === 'expense').reduce((s,t) => s+t.amount, 0);
+  document.getElementById('totalIncome').textContent = fmtMoney(income);
+  document.getElementById('totalExpense').textContent = fmtMoney(expense);
+  const net = income - expense;
+  const netEl = document.getElementById('netBalance');
+  netEl.textContent = fmtMoney(net);
+  netEl.style.color = net >= 0 ? 'var(--green)' : 'var(--red)';
+
+  // Recent 5
+  const tbody = document.getElementById('recentList');
+  const recent = transactions.slice(0, 5);
+  if (!recent.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty">Tranzaksiyalar yo\'q</td></tr>'; }
+  else {
+    tbody.innerHTML = recent.map(t => `
+      <tr>
+        <td>${formatDateShort(t.date)}<br><span style="color:var(--muted);font-size:11px;">${formatTime(t.createdAt)}</span></td>
+        <td>${t.description || '—'}</td>
+        <td>${t.category}</td>
+        <td><span class="badge ${t.type}">${t.type === 'income' ? 'Kirim' : 'Chiqim'}</span></td>
+        <td class="${t.type === 'income' ? 'amount-pos' : 'amount-neg'}">${t.type === 'income' ? '+' : '-'}${fmtMoney(t.amount)}</td>
+      </tr>`).join('');
+  }
+
+  renderBarChart();
+}
+
+function renderBarChart() {
+  const chart = document.getElementById('barChart');
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    days.push(d.toISOString().split('T')[0]);
+  }
+  const maxVal = Math.max(1, ...days.map(day => {
+    const dayTx = transactions.filter(t => t.date === day);
+    return Math.max(
+      dayTx.filter(t => t.type === 'income').reduce((s,t) => s+t.amount, 0),
+      dayTx.filter(t => t.type === 'expense').reduce((s,t) => s+t.amount, 0)
+    );
+  }));
+
+  chart.innerHTML = days.map(day => {
+    const dayTx = transactions.filter(t => t.date === day);
+    const inc = dayTx.filter(t => t.type === 'income').reduce((s,t) => s+t.amount, 0);
+    const exp = dayTx.filter(t => t.type === 'expense').reduce((s,t) => s+t.amount, 0);
+    const incH = Math.round((inc / maxVal) * 130);
+    const expH = Math.round((exp / maxVal) * 130);
+    const d = new Date(day); const label = `${d.getDate()}/${d.getMonth()+1}`;
+    return `<div class="bar-group">
+      <div class="bar-wrap">
+        <div class="bar in" style="height:${incH}px" title="Kirim: ${fmtMoney(inc)}"></div>
+        <div class="bar out" style="height:${expH}px" title="Chiqim: ${fmtMoney(exp)}"></div>
+      </div>
+      <div class="bar-label">${label}</div>
+    </div>`;
+  }).join('');
+}
+
+// ===================== TRANSACTIONS LIST =====================
+function renderFilterCats() {
+  const sel = document.getElementById('filterCat');
+  const all = [...new Set(transactions.map(t => t.category))];
+  sel.innerHTML = '<option value="">Kategoriya</option>' + all.map(c => `<option>${c}</option>`).join('');
+}
+
+function renderTransactions() {
+  const month = document.getElementById('filterMonth').value;
+  const type = document.getElementById('filterType').value;
+  const cat = document.getElementById('filterCat').value;
+
+  let list = transactions.filter(t => {
+    if (month && !t.date.startsWith(month)) return false;
+    if (type && t.type !== type) return false;
+    if (cat && t.category !== cat) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('txList');
+  if (!list.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty">Tranzaksiyalar yo\'q</td></tr>'; return; }
+  tbody.innerHTML = list.map(t => `
+    <tr>
+      <td>${formatDateShort(t.date)}<br><span style="color:var(--muted);font-size:11px;">${formatTime(t.createdAt)}</span></td>
+      <td>${t.description || '—'}</td>
+      <td>${t.category}</td>
+      <td style="color:var(--muted);font-size:12px;">${t.payMethod || ''}</td>
+      <td><span class="badge ${t.type}">${t.type === 'income' ? 'Kirim' : 'Chiqim'}</span></td>
+      <td class="${t.type === 'income' ? 'amount-pos' : 'amount-neg'}">${t.type === 'income' ? '+' : '-'}${fmtMoney(t.amount)}</td>
+      <td><button class="btn btn-red btn-sm" onclick="openDelete(${t.id})">🗑</button></td>
+    </tr>`).join('');
+}
+
+// ===================== REPORT =====================
+function setReportPeriod(p, btn) {
+  currentReportPeriod = p;
+  document.querySelectorAll('.summary-period .period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderReport();
+}
+
+function renderReport() {
+  const now = new Date();
+  let filtered;
+  if (currentReportPeriod === 'month') {
+    filtered = transactions.filter(t => t.date.startsWith(`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`));
+  } else if (currentReportPeriod === 'last') {
+    const lm = new Date(now.getFullYear(), now.getMonth()-1, 1);
+    filtered = transactions.filter(t => t.date.startsWith(`${lm.getFullYear()}-${String(lm.getMonth()+1).padStart(2,'0')}`));
+  } else {
+    filtered = transactions.filter(t => t.date.startsWith(`${now.getFullYear()}`));
+  }
+
+  const income = filtered.filter(t => t.type === 'income').reduce((s,t) => s+t.amount, 0);
+  const expense = filtered.filter(t => t.type === 'expense').reduce((s,t) => s+t.amount, 0);
+  document.getElementById('rptIncome').textContent = fmtMoney(income);
+  document.getElementById('rptExpense').textContent = fmtMoney(expense);
+  const net = income - expense;
+  const netEl = document.getElementById('rptNet');
+  netEl.textContent = fmtMoney(net);
+  netEl.style.color = net >= 0 ? 'var(--green)' : 'var(--red)';
+
+  // Donut chart
+  const PALETTE_INC = ['#22c55e','#4ade80','#86efac','#16a34a','#15803d','#34d399','#6ee7b7','#a7f3d0'];
+  const PALETTE_EXP = ['#ef4444','#f87171','#fca5a5','#dc2626','#b91c1c','#f97316','#fb923c','#fdba74'];
+
+  function donutArc(cx, cy, r, startAngle, endAngle) {
+    const s = { x: cx + r * Math.cos(startAngle), y: cy + r * Math.sin(startAngle) };
+    const e = { x: cx + r * Math.cos(endAngle),   y: cy + r * Math.sin(endAngle)   };
+    const large = endAngle - startAngle > Math.PI ? 1 : 0;
+    return `M ${s.x} ${s.y} A ${r} ${r} 0 ${large} 1 ${e.x} ${e.y}`;
+  }
+
+  function renderCats(type, containerId) {
+    const cats = {}, counts = {};
+    filtered.filter(t => t.type === type).forEach(t => {
+      cats[t.category] = (cats[t.category] || 0) + t.amount;
+      counts[t.category] = (counts[t.category] || 0) + 1;
+    });
+    const container = document.getElementById(containerId);
+    const sorted = Object.entries(cats).sort((a,b) => b[1]-a[1]);
+    if (!sorted.length) {
+      container.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:12px 0;">Ma\'lumot yo\'q</div>';
+      return;
+    }
+    const total = sorted.reduce((s,[,v]) => s+v, 0);
+    const palette = type === 'income' ? PALETTE_INC : PALETTE_EXP;
+    const cx = 90, cy = 90, R = 70, r = 45, gap = 0.03;
+
+    // SVG arcs
+    let angle = -Math.PI / 2;
+    const arcs = sorted.map(([cat, val], i) => {
+      const sweep = (val / total) * (2 * Math.PI - gap * sorted.length);
+      const d = donutArc(cx, cy, R, angle + gap/2, angle + sweep - gap/2);
+      const dInner = donutArc(cx, cy, r, angle + sweep - gap/2, angle + gap/2);
+      angle += sweep + gap;
+      return `<path d="${d} L ${cx + r * Math.cos(angle - sweep - gap/2 + gap/2 + sweep - gap)} ${cy + r * Math.sin(angle - sweep - gap/2 + gap/2 + sweep - gap)}" fill="none"
+               stroke="${palette[i % palette.length]}" stroke-width="${R - r}" stroke-linecap="round"
+               d="${donutArc(cx, cy, (R+r)/2, angle - sweep, angle - gap)}"
+               />`;
+    });
+
+    // Redo with stroke approach (simpler & cleaner)
+    angle = -Math.PI / 2;
+    const strokeR = (R + r) / 2;
+    const strokeW = R - r;
+    const circum = 2 * Math.PI * strokeR;
+    let svgPaths = '';
+    let legendHTML = '';
+
+    sorted.forEach(([cat, val], i) => {
+      const pct = val / total;
+      const cnt = counts[cat];
+      const sweep = pct * (2 * Math.PI);
+      const color = palette[i % palette.length];
+      const dashLen = (pct * circum) - 2;
+      const pctStr = Math.round(pct * 100) + '%';
+
+      svgPaths += `<circle cx="${cx}" cy="${cy}" r="${strokeR}"
+        fill="none" stroke="${color}" stroke-width="${strokeW - 2}"
+        stroke-dasharray="${dashLen} ${circum}"
+        stroke-dashoffset="${-((angle + Math.PI/2) / (2*Math.PI)) * circum}"
+        stroke-linecap="butt"
+        style="cursor:pointer;transition:stroke-width 0.2s;"
+        data-cat="${cat}" data-val="${val}" data-count="${cnt}" data-color="${color}"
+        onmousemove="showDonutTip(event,this)"
+        onmouseenter="this.setAttribute('stroke-width','${strokeW + 4}')"
+        onmouseleave="hideDonutTip();this.setAttribute('stroke-width','${strokeW - 2}')"
+        />`;
+
+      angle += sweep;
+
+      legendHTML += `
+        <div class="donut-legend-item">
+          <div class="donut-dot" style="background:${color}"></div>
+          <span class="donut-leg-name">${cat}</span>
+          <span class="donut-leg-count">${cnt}x</span>
+          <span class="donut-leg-val" style="color:${color}">${fmtMoney(val)}</span>
+          <span class="donut-leg-pct">${pctStr}</span>
+        </div>`;
+    });
+
+    container.innerHTML = `
+      <div class="donut-wrap">
+        <div class="donut-svg-wrap">
+          <svg viewBox="0 0 180 180">
+            <circle cx="${cx}" cy="${cy}" r="${strokeR}" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="${strokeW - 2}"/>
+            ${svgPaths}
+          </svg>
+          <div class="donut-center">
+            <span class="donut-center-val">${fmtMoney(total)}</span>
+            <span class="donut-center-lbl">Jami</span>
+          </div>
+        </div>
+        <div class="donut-legend">${legendHTML}</div>
+      </div>`;
+  }
+  renderCats('income', 'incCats');
+  renderCats('expense', 'expCats');
+}
+
+// ===================== BOT =====================
+let botState = {};
+let botInited = false;
+
+function initBot() {
+  if (botInited) return;
+  botInited = true;
+  botState = {};
+  botMsg('Salom! 👋 Men sizga kirim va chiqimlarni kiritishda yordam beraman.\n\nQuyidagicha yozing:\n<b>50000 kirim savdo</b>\nyoki <b>chiqim 30000 oziq-ovqat</b>\n\nYoki bosqichma-bosqich kiritish uchun:', [
+    { label: '↑ Kirim kiritish', cls: 'inc', val: 'kirim' },
+    { label: '↓ Chiqim kiritish', cls: 'exp', val: 'chiqim' }
+  ]);
+}
+
+function botMsg(text, quickBtns = []) {
+  const wrap = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg bot';
+  let btnsHtml = '';
+  if (quickBtns.length) {
+    btnsHtml = `<div class="chat-quick-btns">${quickBtns.map(b =>
+      `<button class="chat-quick-btn ${b.cls||''}" onclick="sendChat('${b.val}')">${b.label}</button>`
+    ).join('')}</div>`;
+  }
+  div.innerHTML = `<div class="chat-avatar">🤖</div><div><div class="chat-bubble">${text.replace(/\n/g,'<br>')}</div>${btnsHtml}</div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function userMsg(text) {
+  const wrap = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg user';
+  div.innerHTML = `<div class="chat-avatar">👤</div><div class="chat-bubble">${text}</div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function sendChat(val) {
+  const input = document.getElementById('chatInput');
+  const text = (val || input.value).trim();
+  if (!text) return;
+  input.value = '';
+  userMsg(text);
+  setTimeout(() => processBotInput(text), 300);
+}
+
+function parseAmount(str) {
+  const clean = str.replace(/[\s,_]/g, '');
+  const m = clean.match(/\d+/);
+  return m ? parseInt(m[0]) : null;
+}
+
+function parseType(str) {
+  const s = str.toLowerCase();
+  if (/kirim|daromad|keldi|tushdi|income/.test(s)) return 'income';
+  if (/chiqim|xarajat|ketdi|sarflad|expense/.test(s)) return 'expense';
+  return null;
+}
+
+function parseCategory(str, type) {
+  const s = str.toLowerCase();
+  const list = (type ? categories[type] : [...categories.income, ...categories.expense]) || [];
+  return list.find(c => s.includes(c.toLowerCase())) || null;
+}
+
+function processBotInput(text) {
+  const step = botState.step;
+
+  // --- step: waiting for type ---
+  if (step === 'waitType') {
+    const type = parseType(text);
+    if (!type) { botMsg('Kirim yoki chiqim? Iltimos aniq yozing.'); return; }
+    botState.type = type;
+    botState.step = 'waitAmount';
+    botMsg(`${type === 'income' ? '✅ Kirim' : '🔴 Chiqim'} tanlandi.\nQancha summa?`);
+    return;
+  }
+
+  // --- step: waiting for amount ---
+  if (step === 'waitAmount') {
+    const amount = parseAmount(text);
+    if (!amount) { botMsg('Summani raqam bilan yozing. Masalan: <b>50000</b>'); return; }
+    botState.amount = amount;
+    botState.step = 'waitCategory';
+    const cats = categories[botState.type] || [];
+    botMsg('Kategoriyani tanlang yoki yozing:', cats.map(c => ({ label: c, val: c })));
+    return;
+  }
+
+  // --- step: waiting for category ---
+  if (step === 'waitCategory') {
+    const allCats = [...categories.income, ...categories.expense];
+    const cat = allCats.find(c => c.toLowerCase() === text.toLowerCase()) || text;
+    botState.category = cat;
+    botState.step = 'waitDesc';
+    botMsg('Tavsif (ixtiyoriy). O\'tkazib yuborish uchun <b>-</b> yozing:');
+    return;
+  }
+
+  // --- step: waiting for description ---
+  if (step === 'waitDesc') {
+    botState.description = text === '-' ? '' : text;
+    botState.step = 'confirm';
+    showBotConfirm();
+    return;
+  }
+
+  // --- step: confirmation ---
+  if (step === 'confirm') {
+    if (/ha|yes|ok|tasdi|to'g/i.test(text)) {
+      saveBotTx();
+    } else if (/yo'q|yoq|no|bekor|cancel/i.test(text)) {
+      botState = {};
+      botMsg('Bekor qilindi. Yangi tranzaksiya kiritasizmi?', [
+        { label: '↑ Kirim', cls: 'inc', val: 'kirim' },
+        { label: '↓ Chiqim', cls: 'exp', val: 'chiqim' }
+      ]);
+    } else {
+      botMsg('Tasdiqlash uchun <b>Ha</b>, bekor qilish uchun <b>Yo\'q</b> yozing.');
+    }
+    return;
+  }
+
+  // --- FREE TEXT PARSING (no active step) ---
+  const type = parseType(text);
+  const amount = parseAmount(text);
+  const category = parseCategory(text, type);
+
+  if (type && amount && category) {
+    // All info found — confirm
+    botState = { type, amount, category, description: '', step: 'confirm' };
+    showBotConfirm();
+  } else if (text === 'kirim' || text === 'chiqim') {
+    botState = { type: text === 'kirim' ? 'income' : 'expense', step: 'waitAmount' };
+    botMsg('Qancha summa?');
+  } else if (type && amount) {
+    botState = { type, amount, step: 'waitCategory' };
+    const cats = categories[type] || [];
+    botMsg('Kategoriyani tanlang:', cats.map(c => ({ label: c, val: c })));
+  } else if (type) {
+    botState = { type, step: 'waitAmount' };
+    botMsg('Qancha summa?');
+  } else if (amount) {
+    botState = { amount, step: 'waitType' };
+    botMsg('Bu kirim yoki chiqim?', [
+      { label: '↑ Kirim', cls: 'inc', val: 'kirim' },
+      { label: '↓ Chiqim', cls: 'exp', val: 'chiqim' }
+    ]);
+  } else {
+    botMsg('Tushunmadim 😅\nMasalan: <b>100000 kirim savdo</b> yoki tugmalardan birini bosing.', [
+      { label: '↑ Kirim kiritish', cls: 'inc', val: 'kirim' },
+      { label: '↓ Chiqim kiritish', cls: 'exp', val: 'chiqim' }
+    ]);
+  }
+}
+
+function showBotConfirm() {
+  const s = botState;
+  const color = s.type === 'income' ? 'var(--green)' : 'var(--red)';
+  const typeLabel = s.type === 'income' ? '↑ Kirim' : '↓ Chiqim';
+  const wrap = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg bot';
+  div.innerHTML = `<div class="chat-avatar">🤖</div><div>
+    <div class="chat-bubble">
+      Tasdiqlaysizmi?
+      <div class="tx-confirm-card">
+        <div class="row"><span class="lbl">Tur</span><span style="color:${color};font-weight:700;">${typeLabel}</span></div>
+        <div class="row"><span class="lbl">Summa</span><span style="font-weight:700;">${fmtMoney(s.amount)}</span></div>
+        <div class="row"><span class="lbl">Kategoriya</span><span>${s.category}</span></div>
+        ${s.description ? `<div class="row"><span class="lbl">Tavsif</span><span>${s.description}</span></div>` : ''}
+      </div>
+    </div>
+    <div class="chat-quick-btns">
+      <button class="chat-quick-btn inc" onclick="sendChat('ha')">✓ Ha, saqlash</button>
+      <button class="chat-quick-btn exp" onclick="sendChat('yoq')">✕ Bekor</button>
+    </div>
+  </div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function saveBotTx() {
+  const s = botState;
+  const today = new Date().toISOString().split('T')[0];
+  transactions.unshift({
+    id: Date.now(),
+    type: s.type,
+    amount: s.amount,
+    category: s.category,
+    description: s.description || '',
+    payMethod: '',
+    date: today,
+    createdAt: new Date().toISOString()
+  });
+  save();
+  botState = {};
+  botMsg(`✅ Saqlandi! <b>${fmtMoney(s.amount)}</b> ${s.type === 'income' ? 'kirim' : 'chiqim'} qo'shildi.\n\nYana kiritasizmi?`, [
+    { label: '↑ Kirim', cls: 'inc', val: 'kirim' },
+    { label: '↓ Chiqim', cls: 'exp', val: 'chiqim' }
+  ]);
+}
+
+// ===================== CATEGORY SETTINGS =====================
+function renderCategorySettings() {
+  ['income','expense'].forEach(type => {
+    const id = type === 'income' ? 'incCatList' : 'expCatList';
+    document.getElementById(id).innerHTML = categories[type].map(c => `
+      <span style="background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;display:flex;align-items:center;gap:6px;">
+        ${c}
+        <button onclick="removeCategory('${type}','${c}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;line-height:1;">×</button>
+      </span>`).join('');
+  });
+}
+
+function addCategory(type) {
+  const input = document.getElementById(type === 'income' ? 'newIncCat' : 'newExpCat');
+  const val = input.value.trim();
+  if (!val) return;
+  if (categories[type].includes(val)) { toast('Bu kategoriya mavjud!', 'error'); return; }
+  categories[type].push(val);
+  saveCategories();
+  input.value = '';
+  renderCategorySettings();
+  updateCategorySelect();
+  toast('Kategoriya qo\'shildi', 'success');
+}
+
+function removeCategory(type, cat) {
+  categories[type] = categories[type].filter(c => c !== cat);
+  saveCategories();
+  renderCategorySettings();
+  updateCategorySelect();
+}
+
+// ===================== DELETE =====================
+function openDelete(id) {
+  deleteId = id;
+  document.getElementById('deleteModal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('deleteModal').classList.remove('open');
+  deleteId = null;
+}
+function confirmDelete() {
+  transactions = transactions.filter(t => t.id !== deleteId);
+  save();
+  closeModal();
+  renderTransactions();
+  toast('O\'chirildi', 'success');
+}
+
+// ===================== EXPORT / IMPORT =====================
+function exportCSV() {
+  const rows = [['Sana','Tavsif','Kategoriya','To\'lov','Tur','Summa']];
+  transactions.forEach(t => rows.push([t.date, t.description||'', t.category, t.payMethod||'', t.type==='income'?'Kirim':'Chiqim', t.amount]));
+  const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+  download('moliya_' + new Date().toISOString().split('T')[0] + '.csv', csv, 'text/csv');
+}
+
+function exportJSON() {
+  download('moliya_backup_' + new Date().toISOString().split('T')[0] + '.json', JSON.stringify({transactions, categories}, null, 2), 'application/json');
+}
+
+function importJSON(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.transactions) transactions = data.transactions;
+      if (data.categories) categories = data.categories;
+      save();
+      saveCategories();
+      renderDashboard();
+      renderTransactions();
+      renderCategorySettings();
+      updateCategorySelect();
+      toast('Import muvaffaqiyatli!', 'success');
+    } catch { toast('Noto\'g\'ri fayl!', 'error'); }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+function download(name, content, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], {type}));
+  a.download = name;
+  a.click();
+}
+
+function confirmClear() {
+  document.getElementById('clearModal').classList.add('open');
+}
+
+function clearAll() {
+  transactions = [];
+  save();
+  document.getElementById('clearModal').classList.remove('open');
+  renderDashboard();
+  renderTransactions();
+  toast('Barcha ma\'lumotlar o\'chirildi', 'success');
+}
+
+// ===================== SAVE =====================
+// Server yoki localStorage — avtomatik aniqlanadi
+const SERVER_MODE = window.location.hostname !== 'localhost' || window.location.port !== '' && window.location.port !== '80';
+const API = '/api/data';
+
+async function syncToServer() {
+  if (!isServerMode()) return;
+  try {
+    await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transactions, categories })
+    });
+  } catch(e) {}
+}
+
+function isServerMode() {
+  // Agar sayt to'g'ridan-to'g'ri fayl sifatida ochilmagan bo'lsa (http/https orqali)
+  return window.location.protocol === 'http:' || window.location.protocol === 'https:';
+}
+
+async function loadFromServer() {
+  if (!isServerMode()) return false;
+  try {
+    const res = await fetch(API);
+    if (!res.ok) return false;
+    const data = await res.json();
+    if (data.transactions) transactions = data.transactions;
+    if (data.categories) categories = data.categories;
+    return true;
+  } catch(e) { return false; }
+}
+
+function save() {
+  localStorage.setItem('moliya_tx', JSON.stringify(transactions));
+  syncToServer();
+}
+
+function saveCategories() {
+  localStorage.setItem('moliya_cats', JSON.stringify(categories));
+  syncToServer();
+}
+
+// ===================== TELEGRAM BOT =====================
+let tgPolling = null;
+let tgOffset = 0;
+let tgChatStates = {};
+let tgGroupChatId = localStorage.getItem('tgGroupChatId') || '';
+
+function saveGroupChatId() {
+  const val = document.getElementById('groupChatId').value.trim();
+  tgGroupChatId = val;
+  localStorage.setItem('tgGroupChatId', val);
+  const el = document.getElementById('groupMonitorStatus');
+  if (val) {
+    el.innerHTML = `🟢 Faol — Guruh: <b>${val}</b>`;
+    el.style.color = 'var(--green)';
+    toast('Guruh saqlandi! Endi bot kuzatmoqda.', 'success');
+  } else {
+    el.textContent = 'Guruh sozlanmagan';
+    el.style.color = 'var(--muted)';
+  }
+}
+const TG_MY_CHAT_ID = 915326936;
+
+// ---- WATCH BOTS ----
+let watchBots = JSON.parse(localStorage.getItem('tgWatchBots') || '[]');
+// [{name, token, offset}]
+let watchPolling = null;
+
+function saveWatchBots() { localStorage.setItem('tgWatchBots', JSON.stringify(watchBots)); }
+
+function renderWatchBotList() {
+  const el = document.getElementById('watchBotList');
+  if (!el) return;
+  if (!watchBots.length) { el.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:4px 0;">Hali bot qo\'shilmagan</div>'; return; }
+  el.innerHTML = watchBots.map((b, i) => `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:18px;">🤖</span>
+      <span style="flex:1;font-size:13px;">${b.name}</span>
+      <span style="font-size:11px;color:var(--muted);font-family:monospace;">${b.token.slice(0,12)}...</span>
+      <button onclick="removeWatchBot(${i})" style="background:var(--red);border:none;color:#fff;border-radius:5px;padding:3px 8px;font-size:12px;cursor:pointer;">O'chirish</button>
+    </div>`).join('');
+}
+
+function addWatchBot() {
+  const token = document.getElementById('watchBotInput').value.trim();
+  const name  = document.getElementById('watchBotName').value.trim() || 'Bot ' + (watchBots.length + 1);
+  if (!token) { toast('Token kiriting!', 'error'); return; }
+  if (watchBots.find(b => b.token === token)) { toast('Bu bot allaqachon qo\'shilgan!', 'error'); return; }
+  watchBots.push({ name, token, offset: 0 });
+  saveWatchBots();
+  document.getElementById('watchBotInput').value = '';
+  document.getElementById('watchBotName').value = '';
+  renderWatchBotList();
+  if (watchPolling) startWatchPolling(); // restart
+  toast(`${name} qo'shildi`, 'success');
+}
+
+function removeWatchBot(i) {
+  watchBots.splice(i, 1);
+  saveWatchBots();
+  renderWatchBotList();
+  toast('Bot o\'chirildi');
+}
+
+async function pollWatchBot(bot) {
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${bot.token}/getUpdates?offset=${bot.offset}&timeout=1`);
+    const data = await res.json();
+    if (!data.ok) return;
+    for (const upd of data.result) {
+      bot.offset = upd.update_id + 1;
+      const text = upd.message?.text || upd.channel_post?.text || '';
+      if (text && isBankMsg(text)) {
+        const amount = tgParseAmount(text);
+        const preview = amount ? tgFmt(amount) : "noma'lum summa";
+        document.getElementById('watchBotStatus').textContent = `⚡ ${bot.name}: ${preview} — ${new Date().toLocaleTimeString()}`;
+        // Shaxsiy chatga darhol xabar
+        await tgSend(TG_MY_CHAT_ID,
+          `🏦 <b>${bot.name}</b> dan xabar:\n💰 ${preview}\n\n⏰ 3 daqiqadan keyin eslatma yuboraman...`
+        );
+        if (tgReminders[TG_MY_CHAT_ID]) clearTimeout(tgReminders[TG_MY_CHAT_ID]);
+        tgReminders[TG_MY_CHAT_ID] = setTimeout(async () => {
+          try { await tgSendReminder(TG_MY_CHAT_ID, amount, text); } catch(e) {}
+        }, 3 * 60 * 1000);
+      }
+    }
+    saveWatchBots();
+  } catch(e) {}
+}
+
+async function pollAllWatchBots() {
+  for (const bot of watchBots) await pollWatchBot(bot);
+}
+
+function startWatchPolling() {
+  if (watchPolling) clearInterval(watchPolling);
+  if (!watchBots.length) return;
+  pollAllWatchBots();
+  watchPolling = setInterval(pollAllWatchBots, 4000);
+}
+
+function tgSaveToken() {
+  const t = document.getElementById('tgToken').value.trim();
+  if (!t) { toast('Token kiriting!', 'error'); return; }
+  localStorage.setItem('tgToken', t);
+  toast('Token saqlandi', 'success');
+}
+function tgGetToken() { return localStorage.getItem('tgToken') || ''; }
+
+function tgStart() {
+  const token = tgGetToken();
+  if (!token) { toast('Avval token saqlang!', 'error'); return; }
+  if (tgPolling) return;
+  document.getElementById('tgStatus').textContent = '🟢 Faol';
+  document.getElementById('tgStatus').style.color = 'var(--green)';
+  document.getElementById('tgStartBtn').style.display = 'none';
+  document.getElementById('tgStopBtn').style.display = '';
+  tgPoll();
+  tgPolling = setInterval(tgPoll, 2500);
+  startWatchPolling();
+  toast('Telegram bot ishga tushdi!', 'success');
+}
+
+function tgStop() {
+  clearInterval(tgPolling); tgPolling = null;
+  clearInterval(watchPolling); watchPolling = null;
+  document.getElementById('tgStatus').textContent = "O'chiq";
+  document.getElementById('tgStatus').style.color = 'var(--muted)';
+  document.getElementById('tgStartBtn').style.display = '';
+  document.getElementById('tgStopBtn').style.display = 'none';
+  toast("Bot to'xtatildi");
+}
+
+async function tgPoll() {
+  const token = tgGetToken(); if (!token) return;
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/getUpdates?offset=${tgOffset}&timeout=1`);
+    const data = await res.json();
+    if (!data.ok) return;
+    for (const upd of data.result) {
+      tgOffset = upd.update_id + 1;
+      const m = upd.message;
+      if (m?.text) {
+        if (tgGroupChatId && String(m.chat.id) === String(tgGroupChatId)) {
+          // Guruhdan kelgan xabar — bank xabari tekshiruvi
+          await tgCheckGroupMsg(m);
+        } else {
+          // Shaxsiy chatdan kelgan xabar
+          await tgHandleMsg(m);
+        }
+      }
+    }
+  } catch(e) {}
+}
+
+function isBankMsg(text) {
+  const t = text.toLowerCase();
+  return /\d[\d\s,]+so'm|to'lov|karta|hisobdan|debet|kredit|o'tkazma|balance|summa|uzcard|humo|visa|mastercard|\*{4}\d{4}/.test(t);
+}
+
+async function tgCheckGroupMsg(msg) {
+  const text = msg.text || '';
+  if (!isBankMsg(text)) return;
+  const amount = tgParseAmount(text);
+  const sender = msg.from?.first_name || msg.from?.username || 'Bot';
+  const preview = amount ? tgFmt(amount) : "noma'lum summa";
+
+  // Shaxsiy chatga darhol bildirish
+  await tgSend(TG_MY_CHAT_ID,
+    `🏦 <b>${sender}</b> guruhda xabar yubordi:\n💰 <b>${preview}</b>\n\n⏰ 3 daqiqadan keyin eslatma keladi...`,
+    [['⏰ Eslatmani bekor qil']]
+  );
+
+  // 3 daqiqadan keyin eslatma
+  if (tgReminders[TG_MY_CHAT_ID]) clearTimeout(tgReminders[TG_MY_CHAT_ID]);
+  tgReminders[TG_MY_CHAT_ID] = setTimeout(async () => {
+    try {
+      await tgSend(TG_MY_CHAT_ID,
+        `⏰ <b>Eslatma!</b>\n\n${sender} ${preview} yubordi — moliya dasturiga kiritmadingizmi?`,
+        [['➕ Kirim kiritish', '➖ Chiqim kiritish'], ['🏠 Bosh sahifa']]
+      );
+    } catch(e) {}
+  }, 3 * 60 * 1000);
+
+  // Saytda ham ko'rsatish
+  toast(`Bank xabari: ${preview} — 3 daqiqada eslatma`, 'success');
+  const el = document.getElementById('groupMonitorStatus');
+  if (el) { el.innerHTML = `⚡ So'nggi xabar: <b>${preview}</b> — ${new Date().toLocaleTimeString()}`; el.style.color = 'var(--green)'; }
+}
+
+async function tgSend(chatId, text, keyboard) {
+  const token = tgGetToken();
+  const body = { chat_id: chatId, text, parse_mode: 'HTML' };
+  if (keyboard) body.reply_markup = { keyboard, resize_keyboard: true, one_time_keyboard: false };
+  else body.reply_markup = { remove_keyboard: true };
+  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+  });
+}
+
+// ---- MAIN MENU ----
+const TG_MENU = [
+  ['📊 Balans', '📋 Tranzaksiyalar'],
+  ['➕ Kirim kiritish', '➖ Chiqim kiritish'],
+  ['📈 Hisobot', '🗂 Kategoriyalar'],
+  ['⏰ Eslatmani bekor qil']
+];
+
+function tgFmt(n) {
+  return Number(n).toLocaleString() + " so'm";
+}
+
+function tgMainMenuText() {
+  const now = new Date();
+  const mo = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const all = transactions;
+  const inc = all.reduce((s,t)=> t.type==='income'?s+t.amount:s, 0);
+  const exp = all.reduce((s,t)=> t.type==='expense'?s+t.amount:s, 0);
+  return `💼 <b>Moliya Boshqaruvi</b>\n\n💰 Jami kirim: <b>${tgFmt(inc)}</b>\n💸 Jami chiqim: <b>${tgFmt(exp)}</b>\n📊 Sof balans: <b>${tgFmt(inc-exp)}</b>\n\nNimani xohlaysiz?`;
+}
+
+const tgReminders = {}; // chatId → timeoutId
+
+async function tgSendReminder(chatId, amount, rawText) {
+  const amtText = amount ? `<b>${tgFmt(amount)}</b>` : 'tranzaksiya';
+  await tgSend(chatId,
+    `⏰ <b>Eslatma!</b>\n\nBankdan ${amtText} o'tdi — uni moliya dasturiga kiritmadingizmi?\n\n📝 Hozir kiriting:`,
+    [['➕ Kirim kiritish', '➖ Chiqim kiritish'], ['🏠 Bosh sahifa']]
+  );
+}
+
+async function tgHandleMsg(msg) {
+  const chatId = msg.chat.id;
+  const text = (msg.text || '').trim();
+  const state = tgChatStates[chatId] || {};
+
+  try {
+
+  // --- FORWARD qilingan xabar (bank notifikatsiyasi) ---
+  if (msg.forward_from || msg.forward_from_chat || msg.forward_date || msg.forward_sender_name) {
+    const amount = tgParseAmount(text);
+    const preview = amount ? tgFmt(amount) : 'noma\'lum summa';
+    await tgSend(chatId,
+      `📨 Bank xabari qabul qilindi!\n💰 Summa: <b>${preview}</b>\n\n⏰ <b>3 daqiqadan keyin</b> eslatma yuboraman — siz bu vaqtda boshqa ishlaringizni qiling.`,
+      [['🏠 Bosh sahifa']]
+    );
+    if (tgReminders[chatId]) clearTimeout(tgReminders[chatId]);
+    tgReminders[chatId] = setTimeout(() => tgSendReminder(chatId, amount, text), 3 * 60 * 1000);
+    return;
+  }
+
+  // --- Eslatmani bekor qilish ---
+  if (text === '⏰ Eslatmani bekor qil') {
+    if (tgReminders[chatId]) { clearTimeout(tgReminders[chatId]); delete tgReminders[chatId]; }
+    await tgSend(chatId, '✅ Eslatma bekor qilindi.', TG_MENU);
+    return;
+  }
+
+  // --- "Bosh sahifa" istalgan vaqtda ---
+  if (text === '🏠 Bosh sahifa' || text === '/start' || text === '/menu') {
+    tgChatStates[chatId] = {};
+    await tgSend(chatId, tgMainMenuText(), TG_MENU);
+    return;
+  }
+
+  // --- STEP handlers ---
+  if (state.step === 'waitAmount') {
+    if (text === '❌ Bekor') { tgChatStates[chatId]={}; await tgSend(chatId, tgMainMenuText(), TG_MENU); return; }
+    const amount = tgParseAmount(text);
+    if (!amount) { await tgSend(chatId, '❌ Faqat raqam yozing. Masalan: <b>50000</b>', [['🏠 Bosh sahifa']]); return; }
+    tgChatStates[chatId] = { ...state, amount, step: 'waitCategory' };
+    const cats = categories[state.type] || [];
+    const rows = [];
+    for (let i = 0; i < cats.length; i += 3) rows.push(cats.slice(i, i+3));
+    rows.push(['🏠 Bosh sahifa']);
+    await tgSend(chatId, '📂 Kategoriyani tanlang:', rows);
+    return;
+  }
+
+  if (state.step === 'waitCategory') {
+    if (text === '🏠 Bosh sahifa') { tgChatStates[chatId]={}; await tgSend(chatId, tgMainMenuText(), TG_MENU); return; }
+    tgChatStates[chatId] = { ...state, category: text, step: 'waitPay' };
+    await tgSend(chatId, '💳 To\'lov usulini tanlang:', [['💵 Naqd', '💳 Karta'], ['🏦 Bank o\'tkazmasi', '🏠 Bosh sahifa']]);
+    return;
+  }
+
+  if (state.step === 'waitPay') {
+    if (text === '🏠 Bosh sahifa') { tgChatStates[chatId]={}; await tgSend(chatId, tgMainMenuText(), TG_MENU); return; }
+    const payMap = { '💵 Naqd':'Naqd', '💳 Karta':'Karta', '🏦 Bank o\'tkazmasi':'Bank o\'tkazmasi' };
+    const payMethod = payMap[text] || text;
+    tgChatStates[chatId] = { ...state, payMethod, step: 'waitDesc' };
+    await tgSend(chatId, "📝 Tavsif yozing yoki o'tkazib yuborish uchun <b>-</b> yozing:", [['-', '🏠 Bosh sahifa']]);
+    return;
+  }
+
+  if (state.step === 'waitDesc') {
+    if (text === '🏠 Bosh sahifa') { tgChatStates[chatId]={}; await tgSend(chatId, tgMainMenuText(), TG_MENU); return; }
+    const desc = text === '-' ? '' : text;
+    const s = { ...state, description: desc, step: 'confirm' };
+    tgChatStates[chatId] = s;
+    const lbl = s.type === 'income' ? '✅ Kirim' : '🔴 Chiqim';
+    await tgSend(chatId,
+      `${lbl}\n💰 Summa: <b>${tgFmt(s.amount)}</b>\n📂 Kategoriya: <b>${s.category}</b>\n💳 To'lov: <b>${s.payMethod||'—'}</b>${s.description?'\n📝 '+s.description:''}\n\nTasdiqlaysizmi?`,
+      [['✅ Ha, saqlash', '❌ Bekor'], ['🏠 Bosh sahifa']]
+    );
+    return;
+  }
+
+  if (state.step === 'confirm') {
+    const confirmed = text === '✅ Ha, saqlash';
+    const cancelled = text === '❌ Bekor' || text === '🏠 Bosh sahifa';
+    if (confirmed) {
+      const s = state;
+      transactions.unshift({
+        id: Date.now(), type: s.type, amount: s.amount,
+        category: s.category, description: s.description||'',
+        payMethod: s.payMethod||'', date: new Date().toISOString().split('T')[0],
+        createdAt: new Date().toISOString()
+      });
+      save();
+      tgChatStates[chatId] = {};
+      await tgSend(chatId, `✅ Tranzaksiya kiritildi!\n\n${s.type==='income'?'💰 Kirim':'💸 Chiqim'}: <b>${tgFmt(s.amount)}</b>\n📂 ${s.category}`, [['🏠 Bosh sahifa']]);
+    } else {
+      tgChatStates[chatId] = {};
+      await tgSend(chatId, '❌ Bekor qilindi.', TG_MENU);
+    }
+    return;
+  }
+
+  // --- MENU commands ---
+
+  if (text === '📊 Balans') {
+    const now = new Date();
+    const mo = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const moTx = transactions.filter(t => t.date.startsWith(mo));
+    const moInc = moTx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+    const moExp = moTx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+    const allInc = transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+    const allExp = transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+    await tgSend(chatId,
+      `📊 <b>Balans</b>\n\n<b>Bu oy:</b>\n✅ Kirim: ${tgFmt(moInc)}\n🔴 Chiqim: ${tgFmt(moExp)}\n💎 Foyda: ${tgFmt(moInc-moExp)}\n\n<b>Jami barcha vaqt:</b>\n✅ Kirim: ${tgFmt(allInc)}\n🔴 Chiqim: ${tgFmt(allExp)}\n💎 Balans: ${tgFmt(allInc-allExp)}`,
+      TG_MENU
+    );
+    return;
+  }
+
+  if (text === '📋 Tranzaksiyalar') {
+    const last = transactions.slice(0, 15);
+    if (!last.length) { await tgSend(chatId, "📋 Tranzaksiyalar yo'q", TG_MENU); return; }
+    const lines = last.map(t => {
+      const sign = t.type==='income' ? '✅' : '🔴';
+      const pay = t.payMethod ? ` (${t.payMethod})` : '';
+      return `${sign} ${t.date} — <b>${tgFmt(t.amount)}</b>\n   📂 ${t.category}${pay}${t.description?' | '+t.description:''}`;
+    }).join('\n\n');
+    await tgSend(chatId, `📋 <b>So'nggi ${last.length} ta tranzaksiya:</b>\n\n${lines}`, TG_MENU);
+    return;
+  }
+
+  if (text === '📈 Hisobot') {
+    const now = new Date();
+    const mo = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const moTx = transactions.filter(t => t.date.startsWith(mo));
+    const moInc = moTx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+    const moExp = moTx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+
+    const expCats = {}, incCats = {}, expCount = {}, incCount = {};
+    moTx.filter(t=>t.type==='expense').forEach(t=>{ expCats[t.category]=(expCats[t.category]||0)+t.amount; expCount[t.category]=(expCount[t.category]||0)+1; });
+    moTx.filter(t=>t.type==='income').forEach(t=>{ incCats[t.category]=(incCats[t.category]||0)+t.amount; incCount[t.category]=(incCount[t.category]||0)+1; });
+
+    const expLines = Object.entries(expCats).sort((a,b)=>b[1]-a[1])
+      .map(([c,v])=>`  🔴 ${c}: ${tgFmt(v)} (${expCount[c]}x)`).join('\n') || "  Yo'q";
+    const incLines = Object.entries(incCats).sort((a,b)=>b[1]-a[1])
+      .map(([c,v])=>`  ✅ ${c}: ${tgFmt(v)} (${incCount[c]}x)`).join('\n') || "  Yo'q";
+
+    const payStats = {};
+    moTx.forEach(t=>{ const p=t.payMethod||'Noma\'lum'; payStats[p]=(payStats[p]||0)+t.amount; });
+    const payLines = Object.entries(payStats).map(([p,v])=>`  💳 ${p}: ${tgFmt(v)}`).join('\n') || "  Yo'q";
+
+    await tgSend(chatId,
+      `📈 <b>${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')} Hisobot</b>\n\n` +
+      `💰 Jami kirim: ${tgFmt(moInc)}\n💸 Jami chiqim: ${tgFmt(moExp)}\n📊 Foyda: ${tgFmt(moInc-moExp)}\n\n` +
+      `<b>Kirim kategoriyalari:</b>\n${incLines}\n\n` +
+      `<b>Chiqim kategoriyalari:</b>\n${expLines}\n\n` +
+      `<b>To'lov usullari:</b>\n${payLines}`,
+      [['📥 CSV yuklab olish'], ['🏠 Bosh sahifa']]
+    );
+    return;
+  }
+
+  if (text === '📥 CSV yuklab olish') {
+    if (!transactions.length) { await tgSend(chatId, "Ma'lumot yo'q", TG_MENU); return; }
+    const token = tgGetToken();
+    const header = 'Sana,Tur,Summa,Kategoriya,To\'lov,Tavsif\n';
+    const rows = transactions.map(t =>
+      `${t.date},${t.type==='income'?'Kirim':'Chiqim'},${t.amount},${t.category},${t.payMethod||''},${(t.description||'').replace(/,/g,' ')}`
+    ).join('\n');
+    const csvContent = '\uFEFF' + header + rows;
+    const blob = new Blob([csvContent], {type:'text/csv'});
+    const formData = new FormData();
+    formData.append('chat_id', chatId);
+    formData.append('document', blob, `moliya_${new Date().toISOString().split('T')[0]}.csv`);
+    formData.append('caption', '📊 Barcha tranzaksiyalar CSV formatda');
+    await fetch(`https://api.telegram.org/bot${token}/sendDocument`, { method:'POST', body: formData });
+    await tgSend(chatId, '✅ CSV fayl yuborildi!', TG_MENU);
+    return;
+  }
+
+  if (text === '🗂 Kategoriyalar') {
+    const inc = categories.income.join(', ');
+    const exp = categories.expense.join(', ');
+    await tgSend(chatId, `🗂 <b>Kategoriyalar</b>\n\n✅ Kirim: ${inc}\n\n🔴 Chiqim: ${exp}`, TG_MENU);
+    return;
+  }
+
+  if (text === '➕ Kirim kiritish' || text.includes('Kirim kiritish')) {
+    tgChatStates[chatId] = { type: 'income', step: 'waitAmount' };
+    await tgSend(chatId, '✅ Kirim miqdorini yozing (faqat raqam):');
+    return;
+  }
+
+  if (text === '➖ Chiqim kiritish' || text.includes('Chiqim kiritish')) {
+    tgChatStates[chatId] = { type: 'expense', step: 'waitAmount' };
+    await tgSend(chatId, '🔴 Chiqim miqdorini yozing (faqat raqam):');
+    return;
+  }
+
+  // --- Free text parse ---
+  const type = tgParseType(text);
+  const amount = tgParseAmount(text);
+  const category = tgParseCategory(text, type);
+
+  if (type && amount && category) {
+    tgChatStates[chatId] = { type, amount, category, description: '', step: 'confirm' };
+    const lbl = type==='income'?'✅ Kirim':'🔴 Chiqim';
+    await tgSend(chatId, `${lbl}\n💰 Summa: <b>${tgFmt(amount)}</b>\n📂 Kategoriya: <b>${category}</b>\n\nTasdiqlaysizmi?`, [['✅ Ha, saqlash','❌ Bekor'],['🏠 Bosh sahifa']]);
+  } else if (type) {
+    tgChatStates[chatId] = { type, step: 'waitAmount' };
+    await tgSend(chatId, `${type==='income'?'✅ Kirim':'🔴 Chiqim'} — qancha summa?`);
+  } else {
+    tgChatStates[chatId] = {};
+    await tgSend(chatId, tgMainMenuText(), TG_MENU);
+  }
+
+  } catch(e) {
+    console.error('tgHandleMsg error:', e);
+    try { await tgSend(chatId, '⚠️ Xatolik yuz berdi. /start bosing.', TG_MENU); } catch(_) {}
+    tgChatStates[chatId] = {};
+  }
+}
+
+function tgParseAmount(str) {
+  const m = str.replace(/[\s,_]/g,'').match(/\d+/); return m ? parseInt(m[0]) : null;
+}
+function tgParseType(str) {
+  const s = str.toLowerCase();
+  if (/kirim|daromad|income|tushdi/.test(s)) return 'income';
+  if (/chiqim|xarajat|expense|sarflad/.test(s)) return 'expense';
+  return null;
+}
+function tgParseCategory(str, type) {
+  const s = str.toLowerCase();
+  const list = type ? categories[type] : [...categories.income, ...categories.expense];
+  return list.find(c => s.includes(c.toLowerCase())) || null;
+}
+
+
+// ===================== TOAST =====================
+function showDonutTip(e, el) {
+  const tip = document.getElementById('donutTooltip');
+  document.getElementById('ttName').textContent = el.dataset.cat;
+  document.getElementById('ttVal').textContent = fmtMoney(Number(el.dataset.val));
+  document.getElementById('ttVal').style.color = el.dataset.color;
+  document.getElementById('ttCount').textContent = el.dataset.count + ' marta';
+  tip.style.display = 'block';
+  tip.style.left = (e.clientX + 14) + 'px';
+  tip.style.top  = (e.clientY - 10) + 'px';
+}
+function hideDonutTip() {
+  document.getElementById('donutTooltip').style.display = 'none';
+}
+
+function toast(msg, type='success') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
+}
+
+// ===================== START =====================
+init();
+</script>
+</body>
+</html>
