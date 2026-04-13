@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const fetch   = require('node-fetch');
 const fs      = require('fs');
 const http    = require('http');
