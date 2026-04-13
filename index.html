@@ -1629,17 +1629,12 @@ function tgSaveToken() {
 function tgGetToken() { return localStorage.getItem('tgToken') || ''; }
 
 function tgStart() {
-  const token = tgGetToken();
-  if (!token) { toast('Avval token saqlang!', 'error'); return; }
-  if (tgPolling) return;
-  document.getElementById('tgStatus').textContent = '🟢 Faol';
+  // Bot server tomonidan boshqariladi — brauzerda polling o'chirilgan
+  document.getElementById('tgStatus').textContent = '🟢 Server ishlayapti';
   document.getElementById('tgStatus').style.color = 'var(--green)';
   document.getElementById('tgStartBtn').style.display = 'none';
   document.getElementById('tgStopBtn').style.display = '';
-  tgPoll();
-  tgPolling = setInterval(tgPoll, 2500);
-  startWatchPolling();
-  toast('Telegram bot ishga tushdi!', 'success');
+  toast('Bot server tomonidan boshqariladi!', 'success');
 }
 
 function tgStop() {
