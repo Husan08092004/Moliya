@@ -628,6 +628,26 @@
 
       <button class="btn btn-primary" onclick="addTransaction()">✓ Saqlash</button>
     </div>
+
+    <div class="table-card" style="margin-top:20px;">
+      <div class="table-header">
+        <h2>Bugungi kirim/chiqimlar</h2>
+        <span id="addPageTodayTotal" style="font-size:13px;color:var(--muted);"></span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Sana</th>
+            <th>Tavsif</th>
+            <th>Kategoriya</th>
+            <th>Tur</th>
+            <th>Summa</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="addPageTxList"></tbody>
+      </table>
+    </div>
   </div>
 
   <!-- TRANSACTIONS -->
@@ -877,6 +897,7 @@ async function init() {
   renderCategorySettings();
   renderDashboard();
   renderTransactions();
+  renderAddPageList();
   const saved = localStorage.getItem('tgToken');
   if (saved) document.getElementById('tgToken').value = saved;
   renderWatchBotList();
@@ -920,7 +941,7 @@ function showPage(name) {
     b.classList.toggle('active', pages[i] === name);
   });
   if (name === 'dashboard') renderDashboard();
-  if (name === 'add') document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
+  if (name === 'add') { document.getElementById('txDate').value = new Date().toISOString().split('T')[0]; renderAddPageList(); }
   if (name === 'transactions') { renderTransactions(); renderFilterCats(); }
   if (name === 'report') renderReport();
   if (name === 'bot') initBot();
@@ -944,6 +965,33 @@ function updateCategorySelect() {
 }
 
 // ===================== ADD =====================
+function renderAddPageList() {
+  const today = new Date().toISOString().split('T')[0];
+  const list = transactions.filter(t => t.date === today);
+  const tbody = document.getElementById('addPageTxList');
+  if (!tbody) return;
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">Bugun hali kiritilmagan</td></tr>';
+    document.getElementById('addPageTodayTotal').textContent = '';
+    return;
+  }
+  const inc = list.filter(t => t.type === 'income').reduce((s,t) => s+t.amount, 0);
+  const exp = list.filter(t => t.type === 'expense').reduce((s,t) => s+t.amount, 0);
+  document.getElementById('addPageTodayTotal').textContent = `+${fmtMoney(inc)}  −${fmtMoney(exp)}`;
+  tbody.innerHTML = list.map(t => `
+    <tr>
+      <td>${formatDateShort(t.date)}</td>
+      <td>${t.description || '—'}</td>
+      <td>${t.category}</td>
+      <td><span class="badge ${t.type}">${t.type === 'income' ? 'Kirim' : 'Chiqim'}</span></td>
+      <td class="${t.type === 'income' ? 'amount-pos' : 'amount-neg'}">${t.type === 'income' ? '+' : '-'}${fmtMoney(t.amount)}</td>
+      <td style="display:flex;gap:4px;">
+        <button class="btn btn-sm" style="background:var(--card2);border:1px solid var(--border);color:var(--text);" onclick="openEdit(${t.id})">✏️</button>
+        <button class="btn btn-red btn-sm" onclick="openDelete(${t.id})">🗑</button>
+      </td>
+    </tr>`).join('');
+}
+
 function addTransaction() {
   const amount = parseFloat(document.getElementById('amount').value);
   const date = document.getElementById('txDate').value;
@@ -970,6 +1018,7 @@ function addTransaction() {
   document.getElementById('amount').value = '';
   document.getElementById('description').value = '';
   toast(currentType === 'income' ? '✓ Kirim qo\'shildi' : '✓ Chiqim qo\'shildi', 'success');
+  renderAddPageList();
 }
 
 // ===================== PERIOD FILTER =====================
@@ -1513,6 +1562,7 @@ function saveEdit() {
   closeEditModal();
   renderTransactions();
   renderDashboard();
+  renderAddPageList();
   toast('✓ Saqlandi', 'success');
 }
 
@@ -1529,6 +1579,7 @@ function confirmDelete() {
   save();
   closeModal();
   renderTransactions();
+  renderAddPageList();
   toast('O\'chirildi', 'success');
 }
 
