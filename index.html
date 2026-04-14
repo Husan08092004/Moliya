@@ -790,6 +790,50 @@
   </div>
 </div>
 
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal" style="width:480px;">
+    <h3>Tranzaksiyani tahrirlash</h3>
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <button id="editBtnIncome" class="type-btn income active" onclick="editSetType('income')" style="flex:1;padding:8px;">↑ Kirim</button>
+      <button id="editBtnExpense" class="type-btn expense" onclick="editSetType('expense')" style="flex:1;padding:8px;">↓ Chiqim</button>
+    </div>
+    <div class="form-row three" style="margin-bottom:12px;">
+      <div class="form-group">
+        <label>Summa (so'm)</label>
+        <input type="number" id="editAmount" min="0">
+      </div>
+      <div class="form-group">
+        <label>Sana</label>
+        <input type="date" id="editDate">
+      </div>
+      <div class="form-group">
+        <label>Kategoriya</label>
+        <select id="editCategory"></select>
+      </div>
+    </div>
+    <div class="form-row" style="margin-bottom:16px;">
+      <div class="form-group">
+        <label>Tavsif / Izoh</label>
+        <input type="text" id="editDescription" placeholder="Nima uchun...">
+      </div>
+      <div class="form-group">
+        <label>To'lov usuli</label>
+        <select id="editPayMethod">
+          <option>Naqd</option>
+          <option>Karta</option>
+          <option>Bank o'tkazmasi</option>
+          <option>Boshqa</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" style="background:var(--card2);border:1px solid var(--border);color:var(--text);" onclick="closeEditModal()">Bekor qilish</button>
+      <button class="btn btn-primary" onclick="saveEdit()">✓ Saqlash</button>
+    </div>
+  </div>
+</div>
+
 <!-- CLEAR MODAL -->
 <div class="modal-overlay" id="clearModal">
   <div class="modal">
@@ -1041,7 +1085,10 @@ function renderTransactions() {
       <td style="color:var(--muted);font-size:12px;">${t.payMethod || ''}</td>
       <td><span class="badge ${t.type}">${t.type === 'income' ? 'Kirim' : 'Chiqim'}</span></td>
       <td class="${t.type === 'income' ? 'amount-pos' : 'amount-neg'}">${t.type === 'income' ? '+' : '-'}${fmtMoney(t.amount)}</td>
-      <td><button class="btn btn-red btn-sm" onclick="openDelete(${t.id})">🗑</button></td>
+      <td style="display:flex;gap:4px;">
+        <button class="btn btn-sm" style="background:var(--card2);border:1px solid var(--border);color:var(--text);" onclick="openEdit(${t.id})">✏️</button>
+        <button class="btn btn-red btn-sm" onclick="openDelete(${t.id})">🗑</button>
+      </td>
     </tr>`).join('');
 }
 
@@ -1416,6 +1463,59 @@ function removeCategory(type, cat) {
 }
 
 // ===================== DELETE =====================
+let editId = null;
+let editType = 'expense';
+
+function openEdit(id) {
+  const tx = transactions.find(t => t.id === id);
+  if (!tx) return;
+  editId = id;
+  editType = tx.type;
+  document.getElementById('editAmount').value = tx.amount;
+  document.getElementById('editDate').value = tx.date;
+  document.getElementById('editDescription').value = tx.description || '';
+  const pm = document.getElementById('editPayMethod');
+  for (let i = 0; i < pm.options.length; i++) {
+    if (pm.options[i].value === tx.payMethod) { pm.selectedIndex = i; break; }
+  }
+  document.getElementById('editBtnIncome').classList.toggle('active', tx.type === 'income');
+  document.getElementById('editBtnExpense').classList.toggle('active', tx.type === 'expense');
+  const catSel = document.getElementById('editCategory');
+  catSel.innerHTML = (categories[tx.type] || []).map(c => `<option ${c === tx.category ? 'selected' : ''}>${c}</option>`).join('');
+  document.getElementById('editModal').classList.add('open');
+}
+
+function editSetType(t) {
+  editType = t;
+  document.getElementById('editBtnIncome').classList.toggle('active', t === 'income');
+  document.getElementById('editBtnExpense').classList.toggle('active', t === 'expense');
+  const catSel = document.getElementById('editCategory');
+  catSel.innerHTML = (categories[t] || []).map(c => `<option>${c}</option>`).join('');
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('open');
+  editId = null;
+}
+
+function saveEdit() {
+  const amount = parseFloat(document.getElementById('editAmount').value);
+  const date = document.getElementById('editDate').value;
+  const category = document.getElementById('editCategory').value;
+  const description = document.getElementById('editDescription').value.trim();
+  const payMethod = document.getElementById('editPayMethod').value;
+  if (!amount || amount <= 0) { toast('Summa kiriting!', 'error'); return; }
+  if (!date) { toast('Sana kiriting!', 'error'); return; }
+  const idx = transactions.findIndex(t => t.id === editId);
+  if (idx === -1) return;
+  transactions[idx] = { ...transactions[idx], type: editType, amount, date, category, description, payMethod };
+  save();
+  closeEditModal();
+  renderTransactions();
+  renderDashboard();
+  toast('✓ Saqlandi', 'success');
+}
+
 function openDelete(id) {
   deleteId = id;
   document.getElementById('deleteModal').classList.add('open');
